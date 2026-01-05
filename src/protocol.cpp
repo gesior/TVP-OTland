@@ -8,8 +8,6 @@
 #include "rsa.h"
 #include "xtea.h"
 
-extern RSA g_RSA;
-
 namespace {
 
 void XTEA_encrypt(OutputMessage& msg, const xtea::round_keys& key)
@@ -83,7 +81,7 @@ bool Protocol::RSA_decrypt(NetworkMessage& msg)
 		return false;
 	}
 
-	g_RSA.decrypt(reinterpret_cast<char*>(msg.getBuffer()) + msg.getBufferPosition()); //does not break strict aliasing
+	tfs::rsa::decrypt(msg.getBuffer() + msg.getBufferPosition(), 128);
 	return msg.getByte() == 0;
 }
 

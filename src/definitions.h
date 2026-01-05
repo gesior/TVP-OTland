@@ -12,6 +12,7 @@ static constexpr auto CLIENT_VERSION_MAX = 772;
 static constexpr auto CLIENT_VERSION_STR = "7.72";
 
 #define BOOST_ASIO_NO_DEPRECATED
+#define OPENSSL_NO_DEPRECATED
 
 #ifndef __FUNCTION__
 #define __FUNCTION__ __func__

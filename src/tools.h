@@ -9,9 +9,6 @@
 #include "const.h"
 #include "enums.h"
 
-uint32_t PackAbsoluteCoordinate(int x, int y, int z);
-uint32_t PackRelativeCoordinate(int x, int y, int z);
-
 uint32_t getSlotPositionBits(int32_t value);
 
 bool folderHasFiles(const char* path, const char* extension);

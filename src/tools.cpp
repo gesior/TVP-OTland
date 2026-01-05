@@ -23,16 +23,6 @@ std::unordered_map<slots_t, SlotPositionBits> slotBits = {
 	{CONST_SLOT_AMMO, SLOTP_AMMO},
 };
 
-uint32_t PackAbsoluteCoordinate(int x, int y, int z)
-{
-	return (x & 0xFFFF) | ((y & 0xFFFF) << 16) | ((z & 0xFF) << 32);
-}
-
-uint32_t PackRelativeCoordinate(int x, int y, int z)
-{
-	return z + 16 * (y + 0x2000) + ((x + 0x2000) << 18) + 8;
-}
-
 uint32_t getSlotPositionBits(int32_t value)
 {
 	auto it = slotBits.find(static_cast<slots_t>(value));

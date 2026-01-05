@@ -2,18 +2,17 @@
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "dependencies": [
     "boost-asio",
-    "boost-filesystem",
     "boost-iostreams",
     "boost-locale",
     "boost-lockfree",
     "boost-system",
     "boost-variant",
-    "cryptopp",
     "fmt",
     {
       "name": "libiconv",
       "platform": "osx"
     },
+    "openssl",
     "pugixml"
   ],
   "features": {

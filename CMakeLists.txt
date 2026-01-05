@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.19)
 
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
@@ -25,19 +25,14 @@ if (CMAKE_COMPILER_IS_GNUCXX)
 endif ()
 
 # Find packages.
-find_package(CryptoPP QUIET)
-if (CryptoPP_FOUND)  # vcpkg-provided cmake package called CryptoPP
-    set(Crypto++_LIBRARIES "cryptopp-static")
-else()
-    find_package(Crypto++ REQUIRED)
-endif ()
+find_package(OpenSSL 3.0.0 REQUIRED COMPONENTS Crypto)
 find_package(fmt 6.1.2 REQUIRED)
 
 # Look for vcpkg-provided libmariadb first
 # If we link to the file directly, we might miss its dependencies from vcpkg
-find_package(unofficial-libmariadb CONFIG QUIET)
+find_package(unofficial-libmariadb CONFIG)
 if (unofficial-libmariadb_FOUND)
-    set(MYSQL_CLIENT_LIBS "libmariadb")
+    set(MYSQL_CLIENT_LIBS "unofficial::libmariadb")
 else ()
     find_package(MySQL REQUIRED)
 endif ()
@@ -66,15 +61,15 @@ if(POLICY CMP0167)
   cmake_policy(SET CMP0167 NEW)
 endif()
 
-find_package(Boost 1.71.0 REQUIRED COMPONENTS date_time system filesystem iostreams)
+find_package(Boost 1.71.0 REQUIRED COMPONENTS date_time system iostreams)
 
-include_directories(${Boost_INCLUDE_DIRS} ${Crypto++_INCLUDE_DIR} ${LUA_INCLUDE_DIR} ${MYSQL_INCLUDE_DIR} ${PUGIXML_INCLUDE_DIR})
+include_directories(${Boost_INCLUDE_DIRS} ${Crypto++_INCLUDE_DIR} ${LUA_INCLUDE_DIR} ${MYSQL_INCLUDE_DIR} ${OPENSSL_INCLUDE_DIR} ${PUGIXML_INCLUDE_DIR})
 target_link_libraries(tvp PRIVATE
         Boost::date_time
         Boost::system
-        Boost::filesystem
         Boost::iostreams
         fmt::fmt
+        OpenSSL::Crypto
         ${CMAKE_THREAD_LIBS_INIT}
         ${Crypto++_LIBRARIES}
         ${LUA_LIBRARIES}
@@ -96,13 +91,4 @@ else ()
 endif ()
 ### END INTERPROCEDURAL_OPTIMIZATION ###
 
-# Precompiled header
-# note: cotire() must be called last on a target
-if (${CMAKE_VERSION} VERSION_GREATER "3.16.0")
-    target_precompile_headers(tvp PUBLIC src/otpch.h)
-else ()
-    include(cotire)
-    set_target_properties(tvp PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "src/otpch.h")
-    set_target_properties(tvp PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
-    cotire(tvp)
-endif ()
+target_precompile_headers(tvp PUBLIC src/otpch.h)
